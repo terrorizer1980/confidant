@@ -62,7 +62,10 @@
         <a href="../configuration/">Configure</a>
         </li>
       <li class="doc-item">
-        <a href="../using_confidant/">Managing secrets and mappings</a>
+        <a href="../using_confidant/">Managing Secrets and Mappings</a>
+        </li>
+      <li class="doc-item">
+        <a href="../client/">Using the Client</a>
         </li>
     </ul>
   </div>
@@ -71,16 +74,22 @@
     <h3 class="docs-section-heading">Advanced</h3>
     <ul>
       <li class="doc-item">
-        <a href="../../advanced/threat_model/">Threat Model</a>
+        <a href="../../advanced/blind_secrets/">Server-blinded Secrets</a>
         </li>
       <li class="doc-item">
-        <a href="../../advanced/service_to_service_auth/">Service-to-service authentication and encryption</a>
+        <a href="../../advanced/kms_auth/">KMS Authentication</a>
+        </li>
+      <li class="doc-item">
+        <a href="../../advanced/threat_model/">Threat Model</a>
         </li>
       <li class="doc-item">
         <a href="../../advanced/contributing/">Contributing</a>
         </li>
       <li class="doc-item">
         <a href="../../advanced/data_schema/">Data Schema</a>
+        </li>
+      <li class="doc-item">
+        <a href="../../advanced/changelog/">Changelog</a>
         </li>
     </ul>
   </div>
@@ -131,6 +140,32 @@ cd confidant
 docker build -t lyft/confidant .
 </code></pre>
 
+<h1 id="pip-installation">pip installation</h1>
+
+<p>Warning: this is still a work in progress and it may not be working right now.
+We&#39;ll remove this warning when we have pip installation fully working.</p>
+
+<ol>
+<li>Using Ubuntu or Debian (please help with non-Ubuntu/Debian install
+instructions!)</li>
+<li>Using gunicorn as the wsgi server</li>
+<li>venv location: /srv/confidant/venv</li>
+</ol>
+
+<h2 id="make-a-virtualenv-and-install-pip-requirements">Make a virtualenv and install pip requirements</h2>
+
+<pre><code class="bash">sudo apt-get install -y python python-pip python-virtualenv python-dev build-essential libffi-dev libxml2-dev libxmlsec1-dev
+cd /srv/confidant
+virtualenv venv
+source venv/bin/activate
+pip install -U pip
+pip install confidant
+deactivate
+</code></pre>
+
+<p>Note that the pip package includes the minified, generated frontend artifacts,
+in the dist directory. This can be configured via the STATIC_FOLDER setting.</p>
+
 <h1 id="manual-installation">Manual installation</h1>
 
 <p>Assumptions:</p>
@@ -152,10 +187,11 @@ git clone https://github.com/lyft/confidant
 
 <h2 id="make-a-virtualenv-and-install-pip-requirements">Make a virtualenv and install pip requirements</h2>
 
-<pre><code class="bash">sudo apt-get install -y python python-pip python-virtualenv python-dev build-essential libffi-dev
+<pre><code class="bash">sudo apt-get install -y python python-pip python-virtualenv python-dev build-essential libffi-dev libxml2-dev libxmlsec1-dev
 cd /srv/confidant
 virtualenv venv
 source venv/bin/activate
+pip install -U pip
 pip install -r requirements.txt
 deactivate
 </code></pre>

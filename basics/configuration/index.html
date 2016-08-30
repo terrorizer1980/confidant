@@ -62,7 +62,10 @@
         <a href="./">Configure</a>
         </li>
       <li class="doc-item">
-        <a href="../using_confidant/">Managing secrets and mappings</a>
+        <a href="../using_confidant/">Managing Secrets and Mappings</a>
+        </li>
+      <li class="doc-item">
+        <a href="../client/">Using the Client</a>
         </li>
     </ul>
   </div>
@@ -71,16 +74,22 @@
     <h3 class="docs-section-heading">Advanced</h3>
     <ul>
       <li class="doc-item">
-        <a href="../../advanced/threat_model/">Threat Model</a>
+        <a href="../../advanced/blind_secrets/">Server-blinded Secrets</a>
         </li>
       <li class="doc-item">
-        <a href="../../advanced/service_to_service_auth/">Service-to-service authentication and encryption</a>
+        <a href="../../advanced/kms_auth/">KMS Authentication</a>
+        </li>
+      <li class="doc-item">
+        <a href="../../advanced/threat_model/">Threat Model</a>
         </li>
       <li class="doc-item">
         <a href="../../advanced/contributing/">Contributing</a>
         </li>
       <li class="doc-item">
         <a href="../../advanced/data_schema/">Data Schema</a>
+        </li>
+      <li class="doc-item">
+        <a href="../../advanced/changelog/">Changelog</a>
         </li>
     </ul>
   </div>
@@ -142,21 +151,17 @@ export AWS_DEFAULT_REGION=&#39;us-east-1&#39;
 export AUTH_CONTEXT=&#39;confidant-production&#39;
 # The KMS key used for auth.
 export AUTH_KEY=&#39;authnz-production&#39;
-# A long randomly generated string used for the google OAuth2 flow.
-export AUTHOMATIC_SALT=&#39;H39bfLCqLbrYrFyiJIxkK0uf12rlzvgjgo9FqOnttPXIdAAuyQ&#39;
 # The DynamoDB table name for storage.
 export DYNAMODB_TABLE=&#39;confidant-production&#39;
+# Auto-generate the dynamodb table.
+export DYNAMODB_CREATE_TABLE=true
 # Set the gevent resolver to ares; see:
 #   https://github.com/surfly/gevent/issues/468
 export GEVENT_RESOLVER=&#39;ares&#39;
-# The client id and consumer secret from the google developer console.
-export GOOGLE_OAUTH_CLIENT_ID=&#39;123456789-abcdefghijklmnop.apps.googleusercontent.com&#39;
-export GOOGLE_OAUTH_CONSUMER_SECRET=&#39;123456789abcdefghijklmnop&#39;
 # The KMS key used for at-rest encryption in DynamoDB.
 export KMS_MASTER_KEY=&#39;confidant-production&#39;
-# The Redis server used for sessions.
-export REDIS_URL=&#39;redis://localhost:6381&#39;
 # A long randomly generated string for CSRF protection.
+# SESSION_SECRET can be loaded via SECRETS_BOOTSTRAP
 export SESSION_SECRET=&#39;aBVmJA3zv6zWGjrYto135hkdox6mW2kOu7UaXIHK8ztJvT8w5O&#39;
 # The IP address to listen on.
 export HOST=&#39;0.0.0.0&#39;
@@ -164,7 +169,40 @@ export HOST=&#39;0.0.0.0&#39;
 export PORT=&#39;80&#39;
 </code></pre>
 
+<h3 id="google-authentication-configuration">Google authentication configuration</h3>
+
+<p>To enable Google authentication, you&#39;ll need to visit the API manager in the
+Google developer console (<a href="https://console.developers.google.com">https://console.developers.google.com</a>), and create a
+new project (or add credentials to an existing project, if you prefer). After
+creating the project, you&#39;ll need to enable the Google+ API. After enabling the
+Google+ API, you&#39;ll need to add credentials to this project. You&#39;ll want to
+create OAuth client ID credentials. The application type is &#39;Web application&#39;.
+The Authorized JavaScript origins is &#39;<url>/&#39;. The Authorized redirect URI is 
+<code>&lt;url&gt;/v1/login</code>. Take the generated client id and consumer secret, and set
+them in the settings. You&#39;ll also need to generate a long random string and set
+the AUTHOMATIC_SALT setting, for CSRF protection.</p>
+
+<pre><code class="bash"># The authentication type we&#39;ll be using for user authentication (google is the
+# default)
+export USER_AUTH_MODULE=&#39;google&#39;
+# The client id and consumer secret from the google developer console.
+# GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CONSUMER_SECRET can be loaded via SECRETS_BOOTSTRAP
+export GOOGLE_OAUTH_CLIENT_ID=&#39;123456789-abcdefghijklmnop.apps.googleusercontent.com&#39;
+export GOOGLE_OAUTH_CONSUMER_SECRET=&#39;123456789abcdefghijklmnop&#39;
+# A long randomly generated string used for the google OAuth2 flow.
+# AUTHOMATIC_SALT can be loaded via SECRETS_BOOTSTRAP
+export AUTHOMATIC_SALT=&#39;H39bfLCqLbrYrFyiJIxkK0uf12rlzvgjgo9FqOnttPXIdAAuyQ&#39;
+</code></pre>
+
+<h3 id="saml-authentication-configuration">SAML authentication configuration</h3>
+
+<p>TODO: As of Confidant version 1.1 it&#39;s possible to use SAML as an alternative
+to google authentication. We still need to document all of the options, though.
+Basic documentation for each SAML option is described in the settings.py file.</p>
+
 <h2 id="advanced-environment-configuration">Advanced environment configuration</h2>
+
+<h3 id="statsd-metrics">statsd metrics</h3>
 
 <p>Confidant can track some stats via statsd. By default it&#39;s set to send stats to
 statsd on localhost on port 8125.</p>
@@ -173,24 +211,31 @@ statsd on localhost on port 8125.</p>
 export STATSD_PORT=&#39;8125&#39;
 </code></pre>
 
+<h3 id="sending-graphite-events">Sending graphite events</h3>
+
 <p>Confidant can also send graphite events on secret updates or changes in service
 mappings:</p>
 
 <pre><code class="bash">export GRAPHITE_EVENT_URL=&#39;https://graphite.example.com/events/&#39;
 export GRAPHITE_USERNAME=&#39;mygraphiteuser&#39;
+# GRAPHITE_PASSWORD can be loaded via SECRETS_BOOTSTRAP
 export GRAPHITE_PASSWORD=&#39;mylongandsupersecuregraphitepassword&#39;
 </code></pre>
+
+<h3 id="google-authentication-user-restrictions">Google authentication user restrictions</h3>
 
 <p>It&#39;s possible to restrict access to a subset of users that authenticate
 using Google authentication:</p>
 
 <pre><code class="bash">export USERS_FILE=&#39;/etc/confidant/users.yaml&#39;
-export GOOGLE_AUTH_EMAIL_SUFFIX=&#39;@example.com&#39;
+export USER_EMAIL_SUFFIX=&#39;@example.com&#39;
 </code></pre>
 
 <p>In the above configuration, Confidant will limit authentication to users with
 the email domain @example.com. Additionally, Confidant will look in the
 users.yaml file for a list of email addresses allowed to access Confidant.</p>
+
+<h3 id="auth-token-lifetime">Auth token lifetime</h3>
 
 <p>It&#39;s possible to limit the lifetime of KMS authentication tokens. By default
 Confidant limits token lifetime to 60 minutes, to ensure that tokens are being
@@ -198,6 +243,14 @@ rotated. To change this, you can use the following option:</p>
 
 <pre><code class="bash"># Limit token lifetime to 10 minutes.
 export AUTH_TOKEN_MAX_LIFETIME=&#39;10&#39;
+</code></pre>
+
+<h3 id="frontend-configuration">Frontend configuration</h3>
+
+<p>If you&#39;re using the generated, minified output in the dist directory, you
+need to tell confidant to change its static folder:</p>
+
+<pre><code class="bash">export STATIC_FOLDER=&#39;dist&#39;
 </code></pre>
 
 <p>It&#39;s possible to customize portions of the angularjs application.
@@ -208,6 +261,8 @@ will be served from a directory you specify:</p>
 
 <pre><code class="bash">export CUSTOM_FRONTEND_DIRECTORY=&#39;/srv/confidant-static&#39;
 </code></pre>
+
+<h3 id="development-and-testing-settings">Development and testing settings</h3>
 
 <p>There&#39;s a few settings that are meant for development or testing purposes only
 and should never be used in production:</p>
@@ -225,6 +280,106 @@ export SSLIFY=false
 # NEVER USE THIS IN PRODUCTION!
 export DEBUG=true
 </code></pre>
+
+<h3 id="bootstrapping-confidant-39-s-own-secrets">Bootstrapping Confidant&#39;s own secrets</h3>
+
+<p>It&#39;s possible for confidant to load its own secrets from a KMS encrypted base64
+encoded YAML dict. This dict can be generated (and decrypted) through a
+confidant script:</p>
+
+<pre><code class="bash">cd /srv/confidant
+source venv/bin/activate
+
+# Encrypt the data
+python manage.py generate_secrets_bootstrap --in unencrypted_dict.yaml --out encrypted_dict.yaml.enc
+export SECRETS_BOOTSTRAP=`cat encrypted_dict.yaml.enc`
+
+# Get a decrypted output of the yaml data
+python manage.py decrypt_secrets_bootstrap
+</code></pre>
+
+<h3 id="multi-account-authentication">Multi-account authentication</h3>
+
+<p>It&#39;s possible to use confidant across multiple AWS accounts by allowing
+cross-account access to the AUTH_KEY, but when you give access to the AUTH_KEY
+in other accounts, you&#39;re trusting the other account&#39;s IAM policy for
+generating authentication tokens for services. Confidant supports scoping
+services to accounts, where you generate a KMS key for each account, for
+authentication. You can configure confidant to map keys to account names:</p>
+
+<pre><code class="bash">export SCOPED_AUTH_KEYS=&#39;{&quot;sandbox-auth-key&quot;:&quot;sandbox&quot;,&quot;primary-auth-key&quot;:&quot;primary&quot;}&#39;
+</code></pre>
+
+<p>In the above example, if a user scopes a service to the &quot;sandbox&quot; account,
+it&#39;ll require authentication to use the &quot;sandbox-auth-key&quot; KMS key.</p>
+
+<h3 id="kms-authentication-for-end-users">KMS authentication for end-users</h3>
+
+<p>In confidant version 1.1 we introduced a new version of KMS auth that allows
+user authentication in addition to service authentication. By default confidant
+will only allow service authentication.</p>
+
+<pre><code class="bash"># The alias of the KMS key being used for authentication that is specifically
+# for the &#39;user&#39; role. This should not be the same key as AUTH_KEY if your
+# kms token version is less than 2, as it would allow services to masquerade
+#  as users.
+export USER_AUTH_KEY=&#39;user-auth-key&#39;
+# The maximum version of the authentication token accepted.
+export KMS_MAXIMUM_TOKEN_VERSION=&#39;2&#39;
+# The minimum version of the authentication token accepted. You should set this
+# as high as your clients support.
+export KMS_MINIMUM_TOKEN_VERSION=&#39;1&#39;
+# Comma separated list of user types allowed to auth via KMS. Default is
+# &#39;service&#39;.
+export KMS_AUTH_USER_TYPES=&#39;user,service&#39;
+</code></pre>
+
+<h3 id="kms-grant-management">KMS grant management</h3>
+
+<p>By default confidant will manage KMS grants automatically for services that are
+created, assuming that services are directly associated with IAM roles.
+Confidant services don&#39;t need to be directly associated with IAM roles, though,
+since access to the services is defined either by grants on the keys, or
+through IAM policy. It&#39;s possible to disable confidant&#39;s grant management. If
+you disable grant managenent, you&#39;ll either need to manage KMS key grants
+manually, or you&#39;ll need to manage your IAM policy for KMS.</p>
+
+<pre><code class="bash"># Manage auth key grants for service to service authentication. Default True
+export KMS_AUTH_MANAGE_GRANTS=&#39;False&#39;
+</code></pre>
+
+<h3 id="user-authentication-session-settings">User authentication session settings</h3>
+
+<p>By default (in confidant 1.1) confidant will use itsdangerous secure cookies
+for session management, with a session lifetime and maximum session lifetime. A
+user&#39;s session lifetime with automatically be extended any time a user performs
+any action in the interface, but the user&#39;s session lifetime can only be
+extended up to the maximum session lifetime, in which they&#39;ll be required to
+login again. The session lifetime and maximum session lifetime can be adjusted:</p>
+
+<pre><code class="bash"># Session lifetime in seconds. Default is 12 hours.
+export PERMANENT_SESSION_LIFETIME=&#39;43200&#39;
+# Maximum session lifetime in seconds. Default is 24 hours.
+export MAX_PERMANENT_SESSION_LIFETIME=&#39;86400&#39;
+</code></pre>
+
+<p>An alternative to using itsdangerous cookies is to store cookies in a redis
+backend:</p>
+
+<pre><code class="bash">export REDIS_URL=&#39;redis://localhost:6381&#39;
+export PERMANENT_SESSION_LIFETIME=&#39;0&#39;
+</code></pre>
+
+<h3 id="confidant-client-configuration">Confidant client configuration</h3>
+
+<p>Confidant exposes some data to its clients via a flask endpoint. It&#39;s possible
+to expose additional custom data to clients through the server&#39;s configuration:</p>
+
+<pre><code class="bash">export CLIENT_CONFIG=&#39;{&quot;blind_keys&quot;:{&quot;us-east-1&quot;:&quot;alias/blindkey-useast1&quot;,&quot;us-west-2&quot;:&quot;alias/blindkey-uswest2&quot;},&quot;blind_cipher_type&quot;:&quot;fernet&quot;,&quot;blind_cipher_version&quot;:&quot;2&quot;,&quot;blind_store_credential_keys&quot;:true}&#39;
+</code></pre>
+
+<p>The native client, or custom clients can use this data to help configure
+themselves.</p>
 
 <h2 id="kms-key-policy-configuration">KMS key policy configuration</h2>
 

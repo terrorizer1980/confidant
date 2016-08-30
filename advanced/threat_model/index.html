@@ -62,7 +62,10 @@
         <a href="../../basics/configuration/">Configure</a>
         </li>
       <li class="doc-item">
-        <a href="../../basics/using_confidant/">Managing secrets and mappings</a>
+        <a href="../../basics/using_confidant/">Managing Secrets and Mappings</a>
+        </li>
+      <li class="doc-item">
+        <a href="../../basics/client/">Using the Client</a>
         </li>
     </ul>
   </div>
@@ -71,16 +74,22 @@
     <h3 class="docs-section-heading">Advanced</h3>
     <ul>
       <li class="doc-item">
-        <a href="./">Threat Model</a>
+        <a href="../blind_secrets/">Server-blinded Secrets</a>
         </li>
       <li class="doc-item">
-        <a href="../service_to_service_auth/">Service-to-service authentication and encryption</a>
+        <a href="../kms_auth/">KMS Authentication</a>
+        </li>
+      <li class="doc-item">
+        <a href="./">Threat Model</a>
         </li>
       <li class="doc-item">
         <a href="../contributing/">Contributing</a>
         </li>
       <li class="doc-item">
         <a href="../data_schema/">Data Schema</a>
+        </li>
+      <li class="doc-item">
+        <a href="../changelog/">Changelog</a>
         </li>
     </ul>
   </div>
@@ -119,9 +128,10 @@ be reported as an issue in the github project.</p>
 <h3 id="what-an-authenticated-user-can-achieve">What an authenticated user can achieve</h3>
 
 <ol>
-<li>A user can view all secrets.</li>
+<li>A user can view all secrets, but can not view the credential pairs of blind
+secrets.</li>
 <li>A user can view all secret to service mappings.</li>
-<li>A user can create new revisions of a secret.</li>
+<li>A user can create new revisions of a secret or blind secret.</li>
 <li>A user can create new revisions of a service mapping.</li>
 </ol>
 
@@ -163,9 +173,10 @@ run properly, as defined in the configuration guide.</li>
 
 <ol>
 <li>An attacker who successfully compromises the Confidant flask server has full
-control of the service&#39;s IAM credentials and can read all secrets, corrupt or
+control of the service&#39;s IAM credentials and can read secrets, corrupt or
 delete secrets, remap secrets to other services, manipulate web server logs,
-and modify KMS AUTH_KEY grants.</li>
+and modify KMS AUTH_KEY grants. The attacker can not read blind secrets
+that confidant&#39;s IAM credentials do not allow access to.</li>
 </ol>
 
 <h2 id="service-client-threat-model">Service client threat model</h2>
@@ -183,6 +194,8 @@ and modify KMS AUTH_KEY grants.</li>
 
 <ol>
 <li>A service can retrieve the unencrypted secrets mapped to it.</li>
+<li>A service can read blind secrets mapped to it, assuming the service&#39;s IAM
+policy allows it to decrypt the blind secrets.</li>
 </ol>
 
 <h3 id="what-an-attacker-can-achieve-with-a-filesystem-read-vulnerability">What an attacker can achieve with a filesystem read vulnerability</h3>
