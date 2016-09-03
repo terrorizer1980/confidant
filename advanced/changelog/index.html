@@ -113,6 +113,15 @@
 
 <h2 id="1-1">1.1</h2>
 
+<h3 id="1-1-19">1.1.19</h3>
+
+<ul>
+<li>Important change: the location of the wsgi.py has moved inside of the
+confidant module to make the pypi package runnable. This changes the gunicorn
+invocation from <code>gunicorn wsgi:app -k gevent</code> to <code>gunicorn confidant.wsgi:app
+-k gevent</code></li>
+</ul>
+
 <h3 id="1-1-16-1-1-18">1.1.16 - 1.1.18</h3>
 
 <ul>
