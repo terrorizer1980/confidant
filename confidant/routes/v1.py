@@ -635,10 +635,6 @@ def _pair_key_conflicts_for_services(_id, credential_keys, services):
     return conflicts
 
 
-def _lowercase_credential_pairs(credential_pairs):
-    return {i.lower(): j for i, j in credential_pairs.items()}
-
-
 @app.route('/v1/credentials', methods=['POST'])
 @authnz.require_auth
 @authnz.require_csrf_token
@@ -651,8 +647,7 @@ def create_credential():
         return jsonify({'error': 'credential_pairs is a required field'}), 400
     if not isinstance(data.get('metadata', {}), dict):
         return jsonify({'error': 'metadata must be a dict'}), 400
-    # Ensure credential pair keys are lowercase
-    credential_pairs = _lowercase_credential_pairs(data['credential_pairs'])
+    credential_pairs = data['credential_pairs']
     _check, ret = _check_credential_pair_values(credential_pairs)
     if not _check:
         return jsonify(ret), 400
@@ -746,10 +741,7 @@ def update_credential(id):
         return jsonify({'error': 'metadata must be a dict'}), 400
     services = _get_services_for_credential(id)
     if 'credential_pairs' in data:
-        # Ensure credential pair keys are lowercase
-        credential_pairs = _lowercase_credential_pairs(
-            data['credential_pairs']
-        )
+        credential_pairs = data['credential_pairs']
         _check, ret = _check_credential_pair_values(credential_pairs)
         if not _check:
             return jsonify(ret), 400
