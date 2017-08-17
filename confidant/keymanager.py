@@ -20,11 +20,13 @@ config = botocore.config.Config(
 )
 auth_kms_client = confidant.services.get_boto_client(
     'kms',
-    config={'name': 'keymanager', 'config': config}
+    config={'name': 'keymanager', 'config': config},
+    endpoint_url=app.config['KMS_SERVICE_ENDPOINT']
 )
 at_rest_kms_client = confidant.services.get_boto_client(
     'kms',
-    config={'name': 'keymanager', 'config': config}
+    config={'name': 'keymanager', 'config': config},
+    endpoint_url=app.config['KMS_SERVICE_ENDPOINT']
 )
 iam_resource = confidant.services.get_boto_resource('iam')
 

@@ -10,7 +10,10 @@ from confidant.models.service import Service
 from confidant.utils.dynamodb import create_dynamodb_tables
 
 iam_resource = confidant.services.get_boto_resource('iam')
-kms_client = confidant.services.get_boto_client('kms')
+kms_client = confidant.services.get_boto_client(
+    'kms',
+    endpoint_url=app.config['KMS_SERVICE_ENDPOINT']
+)
 
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.INFO)

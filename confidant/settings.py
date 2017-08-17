@@ -253,6 +253,8 @@ KMS_AUTH_MANAGE_GRANTS = bool_env('KMS_AUTH_MANAGE_GRANTS', True)
 # equivalent to the number of tokens you expect to generate within the lifetime
 # of your tokens.
 KMS_AUTH_TOKEN_CACHE_SIZE = int_env('KMS_AUTH_TOKEN_CACHE_SIZE', 4096)
+# Endpoint to use for KMS requests
+KMS_SERVICE_ENDPOINT = str_env('KMS_SERVICE_ENDPOINT', None)
 
 # SSL redirection and HSTS
 
