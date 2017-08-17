@@ -13,16 +13,18 @@ def get_boto_client(
         aws_access_key_id=None,
         aws_secret_access_key=None,
         aws_session_token=None,
-        config=None
+        config=None,
+        endpoint_url=None
         ):
     """Get a boto3 client connection."""
     if config is None:
         config = {}
-    cache_key = '{0}:{1}:{2}:{3}'.format(
+    cache_key = '{0}:{1}:{2}:{3}:{4}'.format(
         client,
         region,
         aws_access_key_id,
-        config.get('name')
+        config.get('name'),
+        endpoint_url or ''
     )
     if not aws_session_token:
         if cache_key in CLIENT_CACHE:
@@ -39,7 +41,8 @@ def get_boto_client(
 
     CLIENT_CACHE[cache_key] = session.client(
         client,
-        config=config.get('config')
+        config=config.get('config'),
+        endpoint_url=endpoint_url
     )
     return CLIENT_CACHE[cache_key]
 
@@ -50,16 +53,18 @@ def get_boto_resource(
         aws_access_key_id=None,
         aws_secret_access_key=None,
         aws_session_token=None,
-        config=None
+        config=None,
+        endpoint_url=None
         ):
     """Get a boto resource connection."""
     if config is None:
         config = {}
-    cache_key = '{0}:{1}:{2}:{3}'.format(
+    cache_key = '{0}:{1}:{2}:{3}:{4}'.format(
         resource,
         region,
         aws_access_key_id,
-        config.get('name')
+        config.get('name'),
+        endpoint_url or ''
     )
     if not aws_session_token:
         if cache_key in RESOURCE_CACHE:
@@ -76,7 +81,8 @@ def get_boto_resource(
 
     RESOURCE_CACHE[cache_key] = session.resource(
         resource,
-        config=config.get('config')
+        config=config.get('config'),
+        endpoint_url=endpoint_url
     )
     return RESOURCE_CACHE[cache_key]
 
