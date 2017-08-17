@@ -23,7 +23,10 @@ from confidant.models.blind_credential import BlindCredential
 from confidant.models.service import Service
 
 iam_resource = confidant.services.get_boto_resource('iam')
-kms_client = confidant.services.get_boto_client('kms')
+kms_client = confidant.services.get_boto_client(
+    'kms',
+    endpoint_url=app.config['KMS_SERVICE_ENDPOINT']
+)
 
 VALUE_LENGTH = 50
 
