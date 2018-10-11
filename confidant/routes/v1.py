@@ -360,7 +360,8 @@ def get_credential_list():
             'enabled': cred.enabled,
             'modified_date': cred.modified_date,
             'modified_by': cred.modified_by,
-            'documentation': cred.documentation
+            'documentation': cred.documentation,
+            'group': cred.group
         })
 
     credentials = sorted(credentials, key=lambda k: k['name'].lower())
@@ -380,6 +381,7 @@ def get_credential(id):
     if (cred.data_type != 'credential' and
             cred.data_type != 'archive-credential'):
         return jsonify({}), 404
+    #TODO: add check for group membership here
     services = []
     for service in Service.data_type_date_index.query('service'):
         services.append(service.id)
@@ -405,7 +407,8 @@ def get_credential(id):
         'enabled': cred.enabled,
         'modified_date': cred.modified_date,
         'modified_by': cred.modified_by,
-        'documentation': cred.documentation
+        'documentation': cred.documentation,
+        'group': cred.group
     })
 
 
@@ -435,7 +438,8 @@ def get_archive_credential_revisions(id):
             'enabled': revision.enabled,
             'modified_date': revision.modified_date,
             'modified_by': revision.modified_by,
-            'documentation': revision.documentation
+            'documentation': revision.documentation,
+            'group': cred.group
         })
     return jsonify({
         'revisions': sorted(
@@ -459,7 +463,8 @@ def get_archive_credential_list():
             'enabled': cred.enabled,
             'modified_date': cred.modified_date,
             'modified_by': cred.modified_by,
-            'documentation': cred.documentation
+            'documentation': cred.documentation,
+            'group': cred.group
         })
     return jsonify({'credentials': credentials})
 
@@ -468,6 +473,7 @@ def _get_credentials(credential_ids):
     credentials = []
     with stats.timer('service_batch_get_credentials'):
         for cred in Credential.batch_get(copy.deepcopy(credential_ids)):
+            #TODO: add check for group membership here
             data_key = keymanager.decrypt_datakey(
                 cred.data_key,
                 encryption_context={'id': cred.id}
@@ -484,7 +490,8 @@ def _get_credentials(credential_ids):
                 'revision': cred.revision,
                 'credential_pairs': _credential_pairs,
                 'metadata': cred.metadata,
-                'documentation': cred.documentation
+                'documentation': cred.documentation,
+                'group': cred.group
             })
     return credentials
 
@@ -643,6 +650,10 @@ def _pair_key_conflicts_for_services(_id, credential_keys, services):
 @authnz.require_csrf_token
 @maintenance.check_maintenance_mode
 def create_credential():
+    #TODO: add in
+    # * collecting the group from the data
+    # * checking that the user is a member of the group
+    # * adding the group to the cred
     data = request.get_json()
     if not data.get('documentation') and settings.get('ENFORCE_DOCUMENTATION'):
         return jsonify({'error': 'documentation is a required field'}), 400
@@ -723,6 +734,10 @@ def get_credential_dependencies(id):
 @authnz.require_csrf_token
 @maintenance.check_maintenance_mode
 def update_credential(id):
+    #TODO: add in
+    # * collecting the group from the data
+    # * checking that the user is a member of the group
+    # * adding the group to the cred
     try:
         _cred = Credential.get(id)
     except DoesNotExist:
