@@ -139,7 +139,11 @@ class AbstractUserAuthenticator(object):
         return self.current_user()['last_name']
 
     def current_groups(self):
-        return self.current_user().get('groups')
+        groups = self.current_user().get('groups')
+        if groups is None:
+            return []
+        else:
+            return groups
 
     def redirect_to_index(self):
         return redirect(flask.url_for('index'))
@@ -263,18 +267,6 @@ class NullUserAuthenticator(AbstractUserAuthenticator):
             'last_name': 'user',
             'groups': []
         }
-
-    def current_email(self):
-        return self.current_user()['email'].lower()
-
-    def current_first_name(self):
-        return self.current_user()['first_name']
-
-    def current_last_name(self):
-        return self.current_user()['last_name']
-
-    def current_groups(self):
-        return self.current_user().get('groups')
 
     def is_authenticated(self):
         """Null users are always authenticated"""
