@@ -24,7 +24,7 @@ if app.config['SSLIFY']:
 
 if app.config.get('REDIS_URL'):
     import redis
-    from flask.ext.session import Session
+    from flask_session import Session
     app.config['SESSION_REDIS'] = redis.Redis.from_url(
         app.config['REDIS_URL']
     )

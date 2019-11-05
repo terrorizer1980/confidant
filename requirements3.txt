@@ -16,11 +16,11 @@ docutils==0.15.2          # via botocore
 entrypoints==0.3          # via flake8
 flake8==3.7.8
 flask-script==2.0.5
-flask-session==0.2.1
+flask-session==0.2.3
 flask-sslify==0.1.5
 flask==1.1.1
-gevent==1.2.1
-greenlet==0.4.12
+gevent==1.4.0             # force this version for py3.7
+greenlet==0.4.15          # force this version for py3.7
 guard==1.0.1
 gunicorn==19.9.0
 idna==2.8                 # via requests
