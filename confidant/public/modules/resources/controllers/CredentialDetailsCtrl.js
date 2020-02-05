@@ -79,9 +79,9 @@
                 $scope.shown = true;
             }
 
-	    $scope.groups = function(usergroups) {
-		return [""].concat(usergroups);
-	    }
+            $scope.groups = function(usergroups) {
+                return [""].concat(usergroups);
+            }
 
             $scope.showValue = function(credentialPair) {
                 if (credentialPair.shown) {
