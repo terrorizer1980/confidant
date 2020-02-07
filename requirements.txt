@@ -18,7 +18,7 @@ entrypoints==0.3          # via flake8
 enum34==1.1.6
 flake8==3.7.8
 flask-script==2.0.5
-flask-session==0.2.3
+flask-session==0.2.1
 flask-sslify==0.1.5
 flask==1.1.1
 funcsigs==1.0.2           # via mock
