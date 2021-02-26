@@ -573,12 +573,8 @@ def create_credential():
         return jsonify({'error': 'credential_pairs is a required field'}), 400
     if not isinstance(data.get('metadata', {}), dict):
         return jsonify({'error': 'metadata must be a dict'}), 400
-    # Ensure credential pair keys are lowercase
-    credential_pairs = credentialmanager.lowercase_credential_pairs(
-        data['credential_pairs']
-    )
     _check, ret = credentialmanager.check_credential_pair_values(
-        credential_pairs
+        data['credential_pairs']
     )
     if not _check:
         return jsonify(ret), 400
@@ -799,10 +795,7 @@ def update_credential(id):
         _cred.revision
     )
     if 'credential_pairs' in data:
-        # Ensure credential pair keys are lowercase
-        credential_pairs = credentialmanager.lowercase_credential_pairs(
-            data['credential_pairs']
-        )
+        credential_pairs = data['credential_pairs']
         _check, ret = credentialmanager.check_credential_pair_values(
             credential_pairs
         )
