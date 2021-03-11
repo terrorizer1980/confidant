@@ -573,8 +573,9 @@ def create_credential():
         return jsonify({'error': 'credential_pairs is a required field'}), 400
     if not isinstance(data.get('metadata', {}), dict):
         return jsonify({'error': 'metadata must be a dict'}), 400
+    credential_pairs = data['credential_pairs']
     _check, ret = credentialmanager.check_credential_pair_values(
-        data['credential_pairs']
+        credential_pairs
     )
     if not _check:
         return jsonify(ret), 400
