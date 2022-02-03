@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:18.04
 LABEL maintainer="rlane@lyft.com"
 
 RUN apt-get update \
