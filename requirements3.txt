@@ -47,7 +47,7 @@ pyopenssl==19.0.0
 python-dateutil==2.8.0    # via botocore, pynamodb
 python3-saml==1.8.0
 pyyaml==5.1.2
-redis==2.10.3
+redis==4.3.6
 requests==2.22.0
 s3transfer==0.2.1         # via boto3
 six==1.12.0               # via cryptography, isodate, mock, pynamodb, pyopenssl, python-dateutil
