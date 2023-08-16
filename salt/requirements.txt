@@ -1,3 +1,4 @@
 salt==2015.8.1
 boto==2.38.0
 boto3==1.1.0
+tornado>=6.3.3 # not directly required, pinned by Snyk to avoid a vulnerability
