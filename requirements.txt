@@ -27,7 +27,7 @@ futures==3.3.0            # via s3transfer
 gevent==1.2.1
 greenlet==0.4.12
 guard==1.0.1
-gunicorn==19.9.0
+gunicorn==22.0.0
 idna==2.8
 ipaddress==1.0.22
 isodate==0.6.0            # via python3-saml
