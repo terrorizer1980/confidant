@@ -54,7 +54,7 @@ python-dateutil==2.8.0    # via botocore, pynamodb
 python3-saml==1.8.0
 pyyaml==5.1.2
 redis==2.10.3
-requests==2.22.0
+requests==2.32.0
 s3transfer==0.2.1         # via boto3
 six==1.12.0
 statsd==3.2.1
