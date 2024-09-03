@@ -22,7 +22,7 @@ flask==1.1.1
 gevent==1.2.1
 greenlet==0.4.12
 guard==1.0.1
-gunicorn==19.9.0
+gunicorn==21.2.0
 idna==2.8                 # via requests
 isodate==0.6.0            # via python3-saml
 itsdangerous==1.1.0       # via flask
