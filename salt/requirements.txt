@@ -1,3 +1,4 @@
 salt==2015.8.1
 boto==2.38.0
 boto3==1.1.0
+requests>=2.32.4 # not directly required, pinned by Snyk to avoid a vulnerability
